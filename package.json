@@ -1,6 +1,6 @@
 {
   "name": "y-excalidraw",
-  "version": "2.0.12",
+  "version": "2.0.13",
   "type": "module",
   "description": "This binding binds a Y.Array to a Exacalidraw whiteboard.",
   "author": "Rahul Badenkal <rahulbadenkal@gmail.com>",
@@ -56,7 +56,7 @@
     "yjs": "^13.6.19"
   },
   "peerDependencies": {
-    "@excalidraw/excalidraw": "^0.17.6",
+    "@excalidraw/excalidraw": "^0.18.0",
     "yjs": "^13.6.19"
   },
   "dependencies": {
