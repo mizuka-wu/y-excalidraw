@@ -18,7 +18,7 @@ export { yjsToExcalidraw };
 
 export class ExcalidrawBinding {
   yElements: Y.Array<Y.Map<any>>;
-  yAssets: Y.Map<any>;
+  yAssets: Y.Map<any> | null = null;
   api: ExcalidrawImperativeAPI;
   awareness?: awarenessProtocol.Awareness;
   undoManager?: Y.UndoManager;
@@ -30,7 +30,7 @@ export class ExcalidrawBinding {
 
   constructor(
     yElements: Y.Array<Y.Map<any>>,
-    yAssets: Y.Map<any>,
+    yAssets: Y.Map<any> | null,
     api: ExcalidrawImperativeAPI,
     awareness?: awarenessProtocol.Awareness,
     undoConfig?: { excalidrawDom: HTMLElement; undoManager: Y.UndoManager }
@@ -61,11 +61,13 @@ export class ExcalidrawBinding {
           applyElementOperations(this.yElements, operations, this);
         }
 
-        const res = getDeltaOperationsForAssets(this.lastKnownFileIds, files);
-        const assetOperations = res.operations;
-        this.lastKnownFileIds = res.lastKnownFileIds;
-        if (assetOperations.length > 0) {
-          applyAssetOperations(this.yAssets, assetOperations, this);
+        if (this.yAssets) {
+          const res = getDeltaOperationsForAssets(this.lastKnownFileIds, files);
+          const assetOperations = res.operations;
+          this.lastKnownFileIds = res.lastKnownFileIds;
+          if (assetOperations.length > 0) {
+            applyAssetOperations(this.yAssets, assetOperations, this);
+          }
         }
 
         if (this.awareness) {
@@ -138,14 +140,16 @@ export class ExcalidrawBinding {
       }
 
       const addedFiles = [...events.keysChanged].map(
-        (key) => this.yAssets.get(key) as BinaryFileData
+        (key) => this.yAssets!.get(key) as BinaryFileData
       );
       this.api.addFiles(addedFiles);
     };
-    this.yAssets.observe(_remoteFilesChangeHandler); // only observe and not observe deep as assets are only added/deleted not updated
-    this.subscriptions.push(() => {
-      this.yAssets.unobserve(_remoteFilesChangeHandler);
-    });
+    if (this.yAssets) {
+      this.yAssets.observe(_remoteFilesChangeHandler); // only observe and not observe deep as assets are only added/deleted not updated
+      this.subscriptions.push(() => {
+        this.yAssets.unobserve(_remoteFilesChangeHandler);
+      });
+    }
 
     if (this.awareness) {
       // Listener for awareness changes made by remote users
@@ -212,11 +216,13 @@ export class ExcalidrawBinding {
     this.api.updateScene({ elements: initialValue });
 
     // init assets
-    this.api.addFiles(
-      [...this.yAssets.keys()].map(
-        (key) => this.yAssets.get(key) as BinaryFileData
-      )
-    );
+    if (this.yAssets) {
+      this.api.addFiles(
+        [...this.yAssets.keys()].map(
+          (key) => this.yAssets.get(key) as BinaryFileData
+        )
+      );
+    }
 
     // init collaborators
     const collaborators = new Map();
