@@ -9,34 +9,42 @@ npm install y-excalidraw
 ```
 
 ## Features
+
 - Sync Excalidraw whiteboard elements
 - Awareness: Sync remote cursor and selections
 - Assets/Files syncing
 - Shared Undo / Redo (each client has its own undo-/redo-history) - as a separate plugin
 
 ## Todo
+
 - Add tests
 - Check the feasibility of making every element key collaborative
 - Add benchmarks
 
 ## Note
+
 The sync is at the excalidraw array item (element) level but not at the element key level. Even the excalidraw cloud offering doesn't support that ([Link](https://blog.excalidraw.com/building-excalidraw-p2p-collaboration-feature/)). It would not be very hard to add it here but there are 2 issues that might crop up
-- If operation 1 on client 1 changes 2 keys (keyA: ValueA, keyB: ValueB) on an array element. Then say operation 2 on client 2 changes 1 key (keyA: ValueZ) on the same array element. If the sync was at the key level then the final array item will be - (keyA: ValueZ, keyB: ValueB) and I am not sure if this final state is always valid. Are all keys of an excalidraw array element independent of each other? 
+
+- If operation 1 on client 1 changes 2 keys (keyA: ValueA, keyB: ValueB) on an array element. Then say operation 2 on client 2 changes 1 key (keyA: ValueZ) on the same array element. If the sync was at the key level then the final array item will be - (keyA: ValueZ, keyB: ValueB) and I am not sure if this final state is always valid. Are all keys of an excalidraw array element independent of each other?
 - Since on any change on the canvas, excalidraw onChange callback fires with the complete new state of the canvas but no diffs. So to make the app reactive at key level we would need to do a deep diff to figure out what key excatly changed. I am not sure how much extra runtime overhead this will introduce, will need to benchmark
 
 ## Helpful resources
+
 - Excalidraw team's blog on how they achieved p2p sharing with excalidraw -> [Link](https://blog.excalidraw.com/building-excalidraw-p2p-collaboration-feature/)
 - How to move items in an array in a safe manner, yjs discussion -> [Link](https://discuss.yjs.dev/t/moving-elements-in-lists/92/15?u=rahulbadenkal)
 - Another intgeration of yjs with excalidraw. Most of the setup code is inspired from there -> [Link](https://github.com/satoren/y-phoenix-channel)
 - Code for the demo was taken from yjs-codemirror.next repo -> [Link](https://github.com/yjs/y-codemirror.next)
 
 ## Getting Started
+
 Install y-excalidraw (Make sure excalidraw and yjs are already installed)
+
 ```
 npm install y-excalidraw
 ```
 
 ## Example
+
 ```typescript
 import * as React from "react";
 
@@ -117,6 +125,7 @@ export default function App() {
 ```
 
 If you want to get the excalidraw array, you can use the utility function
+
 ```typescript
 import { yjsToExcalidraw } from "y-excalidraw"
 
